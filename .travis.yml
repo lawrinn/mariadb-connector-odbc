@@ -22,7 +22,6 @@ before_install:
   - mkdir tmp
   - .travis/gen-ssl.sh mariadb.example.com tmp
   - export SSLCERT=$PROJ_PATH/tmp
-  - export CONNECTOR_C_VERSION=v_2.3.3
 
 matrix:
   allow_failures:
@@ -53,6 +52,9 @@ matrix:
       env: DB=mariadb:10.3
     - os: osx
       compiler: gcc
+      env: DB=mariadb:10.3
+    - os: osx
+      compiler: clang
       env: DB=mariadb:10.3
     - os: linux
       env: DB=mariadb:10.2 PACKET=8M MAXSCALE_VERSION=2.1.8

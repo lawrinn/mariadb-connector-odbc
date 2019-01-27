@@ -65,7 +65,6 @@ export TEST_PASSWORD=
 
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=ON
 # In Travis we are interested in tests with latest C/C version, while for release we must use only latest release tag
-#git submodule update --remote
 cmake --build . --config RelWithDebInfo 
 
 ###################################################################################################################
@@ -77,6 +76,29 @@ cd test
 export ODBCINI="$PWD/odbc.ini"
 export ODBCSYSINI=$PWD
 
+ctest -V
 
+echo "Building with iODBC"
+
+DEBIAN_FRONTEND=noninteractive sudo apt-get update
+DEBIAN_FRONTEND=noninteractive sudo apt-get install --allow-unauthenticated -y --force-yes -m libiodbc2 iodbc libiodbc2-dev
+
+cd ..
+pwd
+ls
+make clean
+ls
+rm CMakeCache.txt
+
+TEST_DRIVER="$PWD/libmaodbc.so"
+TEST_DSN=madb_connstring_test
+
+#iodbc-config --cflags
+
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_OPENSSL=ON -DWITH_IODBC=ON -DODBC_INCLUDE_DIR=/usr/include 
+cmake --build . --config RelWithDebInfo
+
+echo "Running tests with iODBC"
+cd test
 ctest -V
 
